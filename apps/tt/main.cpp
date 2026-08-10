@@ -35,9 +35,8 @@ namespace
   voice                             press Enter, talk, press Enter, hear it back
 
 The database defaults to $TT_DB, or ./tt.db.
-$TT_PROMPT and $TT_TOOLS pick the prompt and tool set; set them to
-prompts/preflight.md and prompts/preflight_tools.json for the preflight
-assistant instead of the timekeeper.
+$TT_PROMPT and $TT_TOOLS override prompts/system.md and prompts/tools.json,
+which is how you try a prompt change without rebuilding.
 )";
     }
 

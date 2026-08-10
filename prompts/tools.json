@@ -212,5 +212,97 @@
         ]
       }
     }
+  },
+  {
+    "type": "function",
+    "function": {
+      "name": "check_rules",
+      "description": "Read the client's Outside Counsel Guidelines for one matter and report what they say about the proposed work. Returns a finding, a summary to read out, the section it came from, and any fields still missing. This is the only source of a citation -- never state a section number that did not come from here.",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "matter_id": {
+            "type": "integer",
+            "description": "id from resolve"
+          },
+          "category": {
+            "type": "string",
+            "enum": [
+              "timekeeper_attendance",
+              "expert_retention",
+              "travel_time",
+              "expense_threshold"
+            ],
+            "description": "timekeeper_attendance for who may work on or attend something; expert_retention for engaging an expert, consultant or vendor; travel_time for billing travel; expense_threshold for a disbursement"
+          },
+          "person": {
+            "type": "string",
+            "description": "the timekeeper or the expert, when the question is about one"
+          },
+          "hours": {
+            "type": "number",
+            "description": "estimated hours, if the lawyer gave one"
+          },
+          "amount_dollars": {
+            "type": "number",
+            "description": "estimated cost in dollars, if the lawyer gave one"
+          },
+          "days_ahead": {
+            "type": "integer",
+            "description": "0 for today, 1 for tomorrow. An approval only counts if it was decided before the work."
+          }
+        },
+        "required": [
+          "matter_id",
+          "category"
+        ]
+      }
+    }
+  },
+  {
+    "type": "function",
+    "function": {
+      "name": "draft_approval",
+      "description": "Write an approval request for work that check_rules said needs one. Call it only after the lawyer says yes. Pass the same arguments you passed to check_rules. Returns the recipient, subject and body. Nothing is sent -- say so.",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "matter_id": {
+            "type": "integer",
+            "description": "id from resolve"
+          },
+          "category": {
+            "type": "string",
+            "enum": [
+              "timekeeper_attendance",
+              "expert_retention",
+              "travel_time",
+              "expense_threshold"
+            ],
+            "description": "the same category you passed to check_rules"
+          },
+          "person": {
+            "type": "string",
+            "description": "the timekeeper or expert the request is about"
+          },
+          "hours": {
+            "type": "number",
+            "description": "estimated hours"
+          },
+          "amount_dollars": {
+            "type": "number",
+            "description": "estimated cost in dollars"
+          },
+          "days_ahead": {
+            "type": "integer",
+            "description": "0 for today, 1 for tomorrow"
+          }
+        },
+        "required": [
+          "matter_id",
+          "category"
+        ]
+      }
+    }
   }
 ]

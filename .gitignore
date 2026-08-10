@@ -25,5 +25,13 @@ notes/
 CLAUDE.md
 .mcp.json
 
+# Editors
+.vscode/
+.idea/
+*.swp
+
 # macOS
 .DS_Store
+
+# Local demo rig, never committed
+scripts/local/

@@ -303,7 +303,6 @@ namespace
     std::unique_ptr<tt::Tracker> _tracker;
     std::unique_ptr<tt::Agent>   _agent;
     // Same model, different prompt and tools. Shares the one Tracker.
-    std::unique_ptr<tt::Agent>   _preflight;
     std::unique_ptr<tt::Voice>   _voice;
 
     NSWindow      *_window;
@@ -321,6 +320,7 @@ namespace
     NSTextField        *_panelStatus;
     TTStack            *_transcript;
     TTPill             *_talkBtn;
+    NSTextField        *_entry;
     // Under ARC a local NSAlert dies when promptWithTitle: returns, before the sheet has run.
     NSAlert       *_sheet;
 
@@ -333,7 +333,6 @@ namespace
     BOOL _listening;
     BOOL _busy;
     BOOL _panelOpen;
-    BOOL _preflightMode;   // which of the two agents the next turn goes to
 }
 
 - (void)applicationDidFinishLaunching:(NSNotification *)note
@@ -354,13 +353,6 @@ namespace
         {
             _tracker = std::make_unique<tt::Tracker>(database_path());
             _agent   = std::make_unique<tt::Agent>(*_tracker, tt::options_from_env());
-
-            // Overrides TT_PROMPT/TT_TOOLS. Always the preflight agent.
-            tt::AgentOptions pf = tt::options_from_env();
-            pf.prompt_path = "prompts/preflight.md";
-            pf.tools_path  = "prompts/preflight_tools.json";
-            // compliance_path stays relative; data/ is copied in beside prompts/.
-            _preflight = std::make_unique<tt::Agent>(*_tracker, pf);
 
             _voice   = std::make_unique<tt::Voice>(tt::VoiceOptions{});
         }
@@ -651,18 +643,6 @@ namespace
 
     NSTextField *heading = label(@"Assistant", 15, NSFontWeightBold, C_TEXT);
 
-    // Which agent hears the next turn. Small: the status word shares the 340.
-    NSSegmentedControl *mode = [[NSSegmentedControl alloc] init];
-    mode.segmentCount = 2;
-    [mode setLabel:@"Time"  forSegment:0];
-    [mode setLabel:@"Rules" forSegment:1];
-    mode.segmentStyle = NSSegmentStyleRounded;
-    mode.controlSize = NSControlSizeSmall;
-    mode.selectedSegment = 0;
-    mode.target = self;
-    mode.action = @selector(switchMode:);
-    mode.translatesAutoresizingMaskIntoConstraints = NO;
-
     // Idle, Listening, Thinking, Speaking.
     _panelStatus = label(@"Idle", 12, NSFontWeightSemibold, C_MUTED);
     _panelStatus.alignment = NSTextAlignmentRight;
@@ -702,16 +682,24 @@ namespace
     _talkBtn.centered = YES;
     _talkBtn.target = self;
     _talkBtn.action = @selector(talk:);
-    _talkBtn.keyEquivalent = @" ";   // space bar
     // It spans the panel: the pins must beat the pill's own width.
     [_talkBtn setContentHuggingPriority:NSLayoutPriorityDefaultLow
                          forOrientation:NSLayoutConstraintOrientationHorizontal];
 
+    // For when talking is not an option, and for testing a prompt without one.
+    _entry = [[NSTextField alloc] init];
+    _entry.placeholderString = @"or type";
+    _entry.font = [NSFont systemFontOfSize:13];
+    _entry.bezelStyle = NSTextFieldRoundedBezel;
+    _entry.target = self;
+    _entry.action = @selector(typed:);
+    _entry.translatesAutoresizingMaskIntoConstraints = NO;
+
     [head addSubview:heading];
-    [head addSubview:mode];
     [head addSubview:_panelStatus];
     [head addSubview:close];
     [head addSubview:headLine];
+    [foot addSubview:_entry];
     [foot addSubview:_talkBtn];
     [foot addSubview:footLine];
     for (NSView *v in @[head, scroll, foot, edge]) { [panel addSubview:v]; }
@@ -730,12 +718,8 @@ namespace
         [heading.leadingAnchor  constraintEqualToAnchor:head.leadingAnchor constant:16],
         [heading.centerYAnchor  constraintEqualToAnchor:head.centerYAnchor],
 
-        [mode.leadingAnchor     constraintEqualToAnchor:heading.trailingAnchor constant:8],
-        [mode.centerYAnchor     constraintEqualToAnchor:head.centerYAnchor],
-
         [_panelStatus.trailingAnchor constraintEqualToAnchor:close.leadingAnchor constant:-8],
-        // The switch sits between the heading and the status word.
-        [_panelStatus.leadingAnchor  constraintGreaterThanOrEqualToAnchor:mode.trailingAnchor
+        [_panelStatus.leadingAnchor  constraintGreaterThanOrEqualToAnchor:heading.trailingAnchor
                                                                  constant:8],
         [_panelStatus.centerYAnchor  constraintEqualToAnchor:head.centerYAnchor],
 
@@ -767,9 +751,14 @@ namespace
         [footLine.heightAnchor   constraintEqualToConstant:1],
 
         // 14 16 18, and the foot takes its height from this.
+        [_entry.leadingAnchor    constraintEqualToAnchor:foot.leadingAnchor constant:16],
+        [_entry.trailingAnchor   constraintEqualToAnchor:foot.trailingAnchor constant:-16],
+        [_entry.topAnchor        constraintEqualToAnchor:foot.topAnchor constant:14],
+        [_entry.heightAnchor     constraintEqualToConstant:28],
+
         [_talkBtn.leadingAnchor  constraintEqualToAnchor:foot.leadingAnchor constant:16],
         [_talkBtn.trailingAnchor constraintEqualToAnchor:foot.trailingAnchor constant:-16],
-        [_talkBtn.topAnchor      constraintEqualToAnchor:foot.topAnchor constant:14],
+        [_talkBtn.topAnchor      constraintEqualToAnchor:_entry.bottomAnchor constant:10],
         [_talkBtn.bottomAnchor   constraintEqualToAnchor:foot.bottomAnchor constant:-18],
     ]];
     return panel;
@@ -1057,17 +1046,6 @@ namespace
 }
 
 // Time or Rules. The transcript stays: one log, both conversations.
-- (void)switchMode:(NSSegmentedControl *)sender
-{
-    // Mid-turn, the answer would land on the agent that never heard the question.
-    if (_busy || _listening)
-    {
-        sender.selectedSegment = _preflightMode ? 1 : 0;
-        return;
-    }
-    _preflightMode = (sender.selectedSegment == 1);
-}
-
 - (void)talkButton:(NSString *)title symbol:(NSString *)sym bg:(NSColor *)bg
 {
     _talkBtn.title = title;
@@ -1301,13 +1279,27 @@ namespace
         return;
     }
 
-    [self appendTurn:str(heard) from:@"You"];
+    [self send:heard];
+}
+
+- (void)typed:(NSTextField *)sender
+{
+    if (_busy) { return; }
+    NSString *typed = sender.stringValue;
+    if (!typed.length) { return; }
+    sender.stringValue = @"";
+    [self send:[typed UTF8String]];
+}
+
+// One turn, whatever produced the text. By value: the block below outlives the
+// caller, and a reference would dangle.
+- (void)send:(std::string)text
+{
+    [self appendTurn:str(text) from:@"You"];
     [self panelStatus:@"Thinking" color:hex(0xFF9500)];
     _busy = YES;
     _talkBtn.enabled = NO;
-
-    // Read on the main thread: a mid-turn switch cannot redirect it.
-    const BOOL preflight = _preflightMode;
+    _entry.enabled = NO;
 
     // say() and speak() take seconds; neither runs on the thread that draws.
     dispatch_async(dispatch_get_global_queue(QOS_CLASS_USER_INITIATED, 0), ^{
@@ -1317,9 +1309,8 @@ namespace
         nlohmann::json results = nlohmann::json::array();
         try
         {
-            tt::Agent &agent = preflight ? *_preflight : *_agent;
-            reply   = agent.say(heard);
-            results = agent.last_results();
+            reply   = _agent->say(text);
+            results = _agent->last_results();
         }
         catch (const std::exception &e)
         {
@@ -1345,6 +1336,7 @@ namespace
             [self panelStatus:@"Idle" color:C_MUTED];
             _busy = NO;
             _talkBtn.enabled = YES;
+            _entry.enabled = YES;
             [self reload];      // the agent may have written something
         });
     });

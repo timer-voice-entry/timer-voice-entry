@@ -2,41 +2,41 @@
   "_note": [
     "Morehouse College rules are quoted verbatim from the college's published",
     "Outside Counsel Guidelines, with real section letters and page numbers.",
-    "Apex Technologies is a fictional client and its guidelines are invented --",
-    "the document name says so, so a citation never claims to be something it is not.",
+    "Apex Technologies is a fictional client and its guidelines are invented.",
+    "The document name says so, so a citation never claims to be something it is not.",
     "",
     "Matters must also exist as tasks in the database, because resolve() reads SQL:",
     "  Apex Technologies  -> Antitrust Litigation, Horizon Acquisition",
-    "  Morehouse College  -> Johnson Employment Litigation"
+    "  Morehouse College  -> Doe Employment Litigation"
   ],
 
   "people": [
     {
-      "name": "Daniel Reyes",
+      "name": "John Doe",
       "role": "partner",
-      "authorized": ["Antitrust Litigation", "Horizon Acquisition", "Johnson Employment Litigation"]
+      "authorized": ["Antitrust Litigation", "Horizon Acquisition", "Doe Employment Litigation"]
     },
     {
-      "name": "Emma Chen",
+      "name": "Jane Doe",
       "role": "associate",
       "authorized": []
     },
     {
-      "name": "Priya Raman",
+      "name": "Richard Roe",
       "role": "associate",
       "authorized": ["Antitrust Litigation"]
     },
     {
-      "name": "Jordan Williams",
+      "name": "Mary Major",
       "role": "client_supervising_attorney",
       "client": "Apex Technologies",
-      "email": "jordan.williams@apex.test"
+      "email": "mary.major@apex.test"
     },
     {
-      "name": "Marcus Bell",
+      "name": "Sam Poe",
       "role": "client_supervising_attorney",
       "client": "Morehouse College",
-      "email": "marcus.bell@morehouse.test"
+      "email": "sam.poe@morehouse.test"
     }
   ],
 
@@ -129,22 +129,22 @@
 
   "approvals": [
     {
-      "matter": "Johnson Employment Litigation",
+      "matter": "Doe Employment Litigation",
       "category": "expert_retention",
-      "person": "Dr. Emily Carter",
+      "person": "Dr. Pat Poe",
       "status": "approved",
       "decided_day": -3
     },
     {
       "matter": "Horizon Acquisition",
       "category": "timekeeper_attendance",
-      "person": "Emma Chen",
+      "person": "Jane Doe",
       "status": "pending"
     },
     {
       "matter": "Antitrust Litigation",
       "category": "timekeeper_attendance",
-      "person": "Emma Chen",
+      "person": "Jane Doe",
       "status": "approved",
       "decided_day": 2
     }
