@@ -1,0 +1,29 @@
+# Build
+build/
+/build-voice/
+compile_commands.json
+.cache/
+
+# Model weights -- fetched by the install script, never committed
+models/
+
+# Databases
+*.db
+*.db-journal
+*.db-wal
+*.db-shm
+*.sqlite
+*.sqlite3
+
+# Working notes: design rationale, known defects, scratch decisions
+notes/
+
+# Claude / agent tooling
+.claude/
+.claude.json
+.claude.json.backup
+CLAUDE.md
+.mcp.json
+
+# macOS
+.DS_Store

@@ -1,0 +1,152 @@
+{
+  "_note": [
+    "Morehouse College rules are quoted verbatim from the college's published",
+    "Outside Counsel Guidelines, with real section letters and page numbers.",
+    "Apex Technologies is a fictional client and its guidelines are invented --",
+    "the document name says so, so a citation never claims to be something it is not.",
+    "",
+    "Matters must also exist as tasks in the database, because resolve() reads SQL:",
+    "  Apex Technologies  -> Antitrust Litigation, Horizon Acquisition",
+    "  Morehouse College  -> Johnson Employment Litigation"
+  ],
+
+  "people": [
+    {
+      "name": "Daniel Reyes",
+      "role": "partner",
+      "authorized": ["Antitrust Litigation", "Horizon Acquisition", "Johnson Employment Litigation"]
+    },
+    {
+      "name": "Emma Chen",
+      "role": "associate",
+      "authorized": []
+    },
+    {
+      "name": "Priya Raman",
+      "role": "associate",
+      "authorized": ["Antitrust Litigation"]
+    },
+    {
+      "name": "Jordan Williams",
+      "role": "client_supervising_attorney",
+      "client": "Apex Technologies",
+      "email": "jordan.williams@apex.test"
+    },
+    {
+      "name": "Marcus Bell",
+      "role": "client_supervising_attorney",
+      "client": "Morehouse College",
+      "email": "marcus.bell@morehouse.test"
+    }
+  ],
+
+  "rules": [
+    {
+      "client": "Morehouse College",
+      "category": "timekeeper_attendance",
+      "effect": "approval_required",
+      "approval_role": "client_supervising_attorney",
+      "document": "Morehouse College Outside Counsel Guidelines",
+      "page": 5,
+      "section": "Section F.1, Team Size and Composition",
+      "excerpt": "Generally, only a single representative from your firm should be present unless the complexity of the situation justifies additional personnel, subject to the supervising attorney's prior approval."
+    },
+    {
+      "client": "Morehouse College",
+      "category": "expert_retention",
+      "effect": "approval_required",
+      "approval_role": "client_supervising_attorney",
+      "document": "Morehouse College Outside Counsel Guidelines",
+      "page": 5,
+      "section": "Section E.4, Management of Non-Attorney Costs",
+      "excerpt": "The engagement of experts and similar non-attorney expenses must receive advance approval, with requests for expert involvement to include a projected budget for their services."
+    },
+    {
+      "client": "Morehouse College",
+      "category": "travel_time",
+      "effect": "discounted",
+      "rate_multiplier": 0.5,
+      "document": "Morehouse College Outside Counsel Guidelines",
+      "page": 8,
+      "section": "Section G.9, Travel Expenses",
+      "excerpt": "If billed, travel time is chargeable at 50% of the standard rate, unless productive work is performed during travel, which must then be detailed in the invoice."
+    },
+    {
+      "client": "Morehouse College",
+      "category": "expense_threshold",
+      "effect": "approval_required",
+      "threshold_cents": 100000,
+      "threshold_inclusive": false,
+      "approval_role": "client_supervising_attorney",
+      "document": "Morehouse College Outside Counsel Guidelines",
+      "page": 7,
+      "section": "Section G.8, Reimbursable Expenses",
+      "excerpt": "Requests exceeding $1,000 per item need prior OGC approval and should be processed directly."
+    },
+
+    {
+      "client": "Apex Technologies",
+      "category": "timekeeper_attendance",
+      "effect": "approval_required",
+      "approval_role": "client_supervising_attorney",
+      "document": "Apex Technologies Outside Counsel Guidelines (sample, fictional)",
+      "page": 3,
+      "section": "Section 3.2, Approved Timekeepers",
+      "excerpt": "Timekeepers who do not appear on the approved staffing plan require written authorization from the supervising attorney before performing any billable work."
+    },
+    {
+      "client": "Apex Technologies",
+      "category": "expert_retention",
+      "effect": "approval_required",
+      "approval_role": "client_supervising_attorney",
+      "document": "Apex Technologies Outside Counsel Guidelines (sample, fictional)",
+      "page": 6,
+      "section": "Section 5.1, Experts and Consultants",
+      "excerpt": "Counsel shall obtain written approval, including a projected fee estimate, before engaging any expert or consultant."
+    },
+    {
+      "client": "Apex Technologies",
+      "category": "travel_time",
+      "effect": "discounted",
+      "rate_multiplier": 0.5,
+      "document": "Apex Technologies Outside Counsel Guidelines (sample, fictional)",
+      "page": 7,
+      "section": "Section 6.4, Travel",
+      "excerpt": "Travel time during which no substantive work is performed is billable at 50% of the standard rate."
+    },
+    {
+      "client": "Apex Technologies",
+      "category": "expense_threshold",
+      "effect": "approval_required",
+      "threshold_cents": 50000,
+      "approval_role": "client_supervising_attorney",
+      "document": "Apex Technologies Outside Counsel Guidelines (sample, fictional)",
+      "page": 8,
+      "section": "Section 7.3, Disbursements",
+      "excerpt": "Any single disbursement of $500 or more requires advance written approval."
+    }
+  ],
+
+  "approvals": [
+    {
+      "matter": "Johnson Employment Litigation",
+      "category": "expert_retention",
+      "person": "Dr. Emily Carter",
+      "status": "approved",
+      "decided_day": -3
+    },
+    {
+      "matter": "Horizon Acquisition",
+      "category": "timekeeper_attendance",
+      "person": "Emma Chen",
+      "status": "pending"
+    },
+    {
+      "matter": "Antitrust Litigation",
+      "category": "timekeeper_attendance",
+      "person": "Emma Chen",
+      "status": "approved",
+      "decided_day": 2
+    }
+  ]
+}

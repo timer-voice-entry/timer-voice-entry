@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN"
+  "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+  <key>CFBundleName</key>              <string>${MACOSX_BUNDLE_BUNDLE_NAME}</string>
+  <key>CFBundleDisplayName</key>       <string>Time Tracker</string>
+  <key>CFBundleExecutable</key>        <string>${MACOSX_BUNDLE_EXECUTABLE_NAME}</string>
+  <!-- Stable: macOS ties microphone permission to this, so changing it means
+       being asked again. -->
+  <key>CFBundleIdentifier</key>        <string>${MACOSX_BUNDLE_GUI_IDENTIFIER}</string>
+  <key>CFBundleShortVersionString</key><string>${MACOSX_BUNDLE_SHORT_VERSION_STRING}</string>
+  <key>CFBundleVersion</key>           <string>${MACOSX_BUNDLE_BUNDLE_VERSION}</string>
+  <key>CFBundlePackageType</key>       <string>APPL</string>
+  <key>LSMinimumSystemVersion</key>    <string>13.0</string>
+  <key>NSHighResolutionCapable</key>   <true/>
+
+  <!-- Not optional. Without this string macOS kills the process the moment it
+       asks for the microphone -- no prompt, no error. -->
+  <key>NSMicrophoneUsageDescription</key>
+  <string>Time Tracker listens so you can log your hours by speaking.</string>
+</dict>
+</plist>

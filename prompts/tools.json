@@ -1,0 +1,216 @@
+[
+  {
+    "type": "function",
+    "function": {
+      "name": "resolve",
+      "description": "Find which client or task a spoken name refers to. Call this before any tool that takes an id. Returns a verdict of unique, ambiguous or none, with ranked candidates. Only act on unique; otherwise ask the user which they meant.",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "phrase": {
+            "type": "string",
+            "description": "what the user said, for example 'northgate roof'"
+          },
+          "kind": {
+            "type": "string",
+            "enum": [
+              "client",
+              "task"
+            ],
+            "description": "omit this to search both clients and tasks"
+          }
+        },
+        "required": [
+          "phrase"
+        ]
+      }
+    }
+  },
+  {
+    "type": "function",
+    "function": {
+      "name": "create_task",
+      "description": "Create a new matter for an existing client. Only call this after the user has confirmed the matter does not already exist. client_id must come from resolve.",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "client_id": {
+            "type": "integer"
+          },
+          "name": {
+            "type": "string",
+            "description": "the matter name, for example 'Lease review'"
+          },
+          "description": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "client_id",
+          "name"
+        ]
+      }
+    }
+  },
+  {
+    "type": "function",
+    "function": {
+      "name": "log_time",
+      "description": "Record time worked on a task. task_id must come from resolve or create_task.",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "task_id": {
+            "type": "integer"
+          },
+          "seconds": {
+            "type": "integer",
+            "description": "duration in seconds; convert 'an hour and a half' to 5400 yourself"
+          },
+          "note": {
+            "type": "string",
+            "description": "optional short note about the work"
+          }
+        },
+        "required": [
+          "task_id",
+          "seconds"
+        ]
+      }
+    }
+  },
+  {
+    "type": "function",
+    "function": {
+      "name": "start_timer",
+      "description": "Start a running timer on a task. task_id must come from resolve or create_task. Use this for 'start timing', not log_time.",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "task_id": {
+            "type": "integer"
+          }
+        },
+        "required": [
+          "task_id"
+        ]
+      }
+    }
+  },
+  {
+    "type": "function",
+    "function": {
+      "name": "stop_timer",
+      "description": "Stop a running timer and record what it measured. This is the only way to stop a timer. Omit task_id to stop whatever is running, which is usually what 'stop that timer' means.",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "task_id": {
+            "type": "integer",
+            "description": "omit to stop every running timer"
+          }
+        },
+        "required": []
+      }
+    }
+  },
+  {
+    "type": "function",
+    "function": {
+      "name": "review_day",
+      "description": "List everything recorded on one day, with the interval id of each entry. Call this before correcting or deleting, because it is where interval ids come from.",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "date": {
+            "type": "string",
+            "description": "YYYY-MM-DD"
+          }
+        },
+        "required": [
+          "date"
+        ]
+      }
+    }
+  },
+  {
+    "type": "function",
+    "function": {
+      "name": "set_interval_duration",
+      "description": "Change how long a recorded entry was, keeping its start time. interval_id must come from review_day or log_time.",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "interval_id": {
+            "type": "integer"
+          },
+          "seconds": {
+            "type": "integer",
+            "description": "the corrected duration in seconds"
+          }
+        },
+        "required": [
+          "interval_id",
+          "seconds"
+        ]
+      }
+    }
+  },
+  {
+    "type": "function",
+    "function": {
+      "name": "delete_interval",
+      "description": "Permanently remove a recorded entry. This cannot be undone. Not for stopping a timer, use stop_timer for that. Only call it when the user asked to delete this specific entry and said yes after you described it. Both ids must come from review_day.",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "task_id": {
+            "type": "integer"
+          },
+          "interval_id": {
+            "type": "integer"
+          }
+        },
+        "required": [
+          "task_id",
+          "interval_id"
+        ]
+      }
+    }
+  },
+  {
+    "type": "function",
+    "function": {
+      "name": "list_tasks",
+      "description": "Every matter being tracked, with its total time. Omit client_id for all clients. Use this when the user asks what exists, or when resolve finds nothing and you need to see what is actually there. Use review_day instead for what happened on a particular day.",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "client_id": {
+            "type": "integer",
+            "description": "omit to list every client's matters"
+          }
+        },
+        "required": []
+      }
+    }
+  },
+  {
+    "type": "function",
+    "function": {
+      "name": "create_client",
+      "description": "Add a new client. Only after the user has confirmed the client does not already exist -- check with list_tasks or resolve first.",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "name"
+        ]
+      }
+    }
+  }
+]
